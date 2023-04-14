@@ -3,7 +3,7 @@
 ### 使用介绍
 Surge直接引用下列模块链接即可
 ```
-https://github.com/SimonGino/For-own-use/blob/master/Surge/UnlockChatGPTTest/chatGPTTest.sgmodule?raw=true
+https://github.com/SimonGino/Config/blob/master/Surge/module/UnlockChatGPTTest/chatGPTTest.sgmodule?raw=true
 ```
 
 ### 使用说明
