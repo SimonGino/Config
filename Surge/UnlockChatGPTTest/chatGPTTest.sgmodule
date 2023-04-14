@@ -1,0 +1,11 @@
+#!name=chatGPT解锁检测
+#!desc=显示ip被ban也可以用openAI key的方式继续使用
+#!system=ios
+# 更新日期：2023.04.07
+# 版本：0.1
+
+[Panel]
+chatgpt-test = script-name=chatgpt-test, title="ChatGPT解锁检测", content="请刷新面板", update-interval=3600
+
+[Script]
+chatgpt-test = type=generic, timeout=15, script-path=https://github.com/SimonGino/For-own-use/blob/master/Surge/UnlockChatGPTTest/fullChatGPTTest.js?raw=true
