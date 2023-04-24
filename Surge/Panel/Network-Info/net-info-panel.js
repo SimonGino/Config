@@ -188,7 +188,7 @@ function getIP() {
  */
 function getNetworkInfo(retryTimes = 5, retryInterval = 1000) {
     // send http request
-    httpMethod.get('http://ip-api.com/json').then(response => {
+    httpMethod.get('https://api.ip.sb/geoip').then(response => {
         if (Number(response.status) > 300) {
             throw new Error(`Request error with http status code: ${response.status}\n${response.data}`);
         }
