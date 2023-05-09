@@ -54,3 +54,7 @@ function getIP() {
   info = info.join("\n");
   return info + "\n";
 }
+
+function getSSID() {
+    return $network.wifi?.ssid;
+}
