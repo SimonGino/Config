@@ -24,7 +24,7 @@ $httpClient.get(url, function(error, response, data){
     
   body = {
     title: "网络信息",
-    content: `国内/局域网:\n`+getIP() +`\n国外:\nIP信息@ ${ip}\n运营商@ ${isp}\nIP位置@ ${emoji}${country} - ${city}`,
+    content: `国内:\n`+getIP() +`\n国外:\nIP信息- ${ip}\n运营商- ${isp}\nIP位置- ${emoji}${country} - ${city}`,
     icon: "key.icloud",
     'icon-color': "#5AC8FA"
   }
@@ -46,10 +46,10 @@ function getIP() {
   if (!v4 && !v6) {
     info = ['網路可能切換', '請手動重整面板更新 IP'];
   } else {
-    if (v4?.primaryAddress) info.push(`v4 @ ${v4?.primaryAddress}`);
-    if (v6?.primaryAddress) info.push(`v6 @ ${v6?.primaryAddress}`);
-    if (v4?.primaryRouter && getSSID()) info.push(`Router v4 @ ${v4?.primaryRouter}`);
-    if (v6?.primaryRouter && getSSID()) info.push(`Router IPv6 @ ${v6?.primaryRouter}`);
+    if (v4?.primaryAddress) info.push(`v4 - ${v4?.primaryAddress}`);
+    if (v6?.primaryAddress) info.push(`v6 - ${v6?.primaryAddress}`);
+    if (v4?.primaryRouter && getSSID()) info.push(`Router v4 - ${v4?.primaryRouter}`);
+    if (v6?.primaryRouter && getSSID()) info.push(`Router IPv6 - ${v6?.primaryRouter}`);
   }
   info = info.join("\n");
   return info;
