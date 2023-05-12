@@ -47,9 +47,9 @@ function getIP() {
     info = ['網路可能切換', '請手動重整面板更新 IP'];
   } else {
     if (v4?.primaryAddress) info.push(`设备IP : ${v4?.primaryAddress}`);
-    if (v6?.primaryAddress) info.push(`设备IP : ${v6?.primaryAddress}`);
+    if (v6?.primaryAddress) info.push(`IPv6地址 : ${v6?.primaryAddress}`);
     if (v4?.primaryRouter && getSSID()) info.push(`路由器IP : ${v4?.primaryRouter}`);
-    if (v6?.primaryRouter && getSSID()) info.push(`路由器IP : ${v6?.primaryRouter}`);
+    if (v6?.primaryRouter && getSSID()) info.push(`IPv6地址 : ${v6?.primaryRouter}`);
   }
   info = info.join("\n");
   return info;
