@@ -24,7 +24,7 @@ $httpClient.get(url, function(error, response, data){
     
   body = {
     title: "网络信息",
-    content: getIP() +`\n节点IP: ${ip}\n节点ISP: ${isp}\n节点位置: ${emoji}${country} - ${city}`,
+    content: getIP() +`\n节点IP : ${ip}\n节点ISP : ${isp}\n节点位置 : ${emoji}${country} - ${city}`,
     icon: "key.icloud",
     'icon-color': "#5AC8FA"
   }
