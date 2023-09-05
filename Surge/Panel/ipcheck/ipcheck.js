@@ -17,7 +17,7 @@ $httpClient.get(ipUrl, function(error, response, data){
     console.log(data)
     let ip = data.trim();
     let url = `https://ipinfo.io/widget/demo/${ip}?dataset=geolocation`;
-    
+     console.log(url)
     $httpClient.get(url, function(error, response, data){
         console.log(data)
         let jsonData = JSON.parse(data);
