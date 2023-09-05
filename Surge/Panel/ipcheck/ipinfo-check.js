@@ -12,37 +12,35 @@ Surge：
 
 */
 
-let ipUrl = "https://ipinfo.io/ip";
-$httpClient.get(ipUrl, function(error, response, data){
+let args = getArgs();
+let token = args.token;
+let url = `https://ipinfo.io?token=${token}`;
+console.log(url)
+$httpClient.get(url, function (error, response, data) {
     console.log(data)
-    let ip = data.trim();
-    let url = `https://ipinfo.io/widget/demo/${ip}?dataset=geolocation`;
-     console.log(url)
-    $httpClient.get(url, function(error, response, data){
-        console.log(data)
-        let jsonData = JSON.parse(data);
-        console.log(jsonData)
-        let ip = jsonData.ip;
-        let country = jsonData.country;
-        let emoji = getFlagEmoji(jsonData.countryCode);
-        let city = jsonData.city;
-        let isp = jsonData.org;
-      
-        body = {
-            title: "网络信息",
-            content: getIP() +`\n节点IP : ${ip}\n节点ISP : ${isp}\n节点位置 : ${emoji}${country} - ${city}`,
-            icon: "key.icloud",
-            'icon-color': "#5AC8FA"
-        };
-        $done(body);
-    });
+    let jsonData = JSON.parse(data);
+    console.log(jsonData)
+    let ip = jsonData.ip;
+    let country = jsonData.country;
+    let emoji = getFlagEmoji(jsonData.country);
+    let city = jsonData.city;
+    let isp = jsonData.org;
+
+    body = {
+        title: "网络信息",
+        content: getIP() + `\n节点IP : ${ip}\n节点ISP : ${isp}\n节点位置 : ${emoji}${country} - ${city}`,
+        icon: "key.icloud",
+        'icon-color': "#5AC8FA"
+    };
+    $done(body);
+
 });
 
 function getFlagEmoji(countryCode) {
     const codePoints = countryCode
-      .toUpperCase()
-      .split('')
-      .map(char => 127397 + char.charCodeAt());
+        .toUpperCase()
+        .split('')
+        .map(char => 127397 + char.charCodeAt());
     return String.fromCodePoint(...codePoints);
 }
 
@@ -64,4 +62,13 @@ function getIP() {
 function getSSID() {
     return $network.wifi?.ssid;
 }
+
+function getArgs() {
+    return Object.fromEntries(
+      $argument
+        .split("&")
+        .map((item) => item.split("="))
+        .map(([k, v]) => [k, decodeURIComponent(v)])
+    );
+  }
 
