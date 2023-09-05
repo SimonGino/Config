@@ -12,49 +12,56 @@ Surge：
 
 */
 
-let url = "http://ip-api.com/json/?lang=zh-CN"
-
-$httpClient.get(url, function(error, response, data){
-    let jsonData = JSON.parse(data)
-    let ip = jsonData.query
-    let country = jsonData.country
-    let emoji = getFlagEmoji(jsonData.countryCode)
-    let city = jsonData.city
-    let isp = jsonData.isp
+let ipUrl = "https://ipinfo.io/ip";
+$httpClient.get(ipUrl, function(error, response, data){
+    console.log(data)
+    let ip = data.trim();
+    let url = `https://ipinfo.io/widget/demo/${ip}?dataset=geolocation`;
     
-  body = {
-    title: "网络信息",
-    content: getIP() +`\n节点IP : ${ip}\n节点ISP : ${isp}\n节点位置 : ${emoji}${country} - ${city}`,
-    icon: "key.icloud",
-    'icon-color': "#5AC8FA"
-  }
-  $done(body);
+    $httpClient.get(url, function(error, response, data){
+        console.log(data)
+        let jsonData = JSON.parse(data);
+        console.log(jsonData)
+        let ip = jsonData.ip;
+        let country = jsonData.country;
+        let emoji = getFlagEmoji(jsonData.countryCode);
+        let city = jsonData.city;
+        let isp = jsonData.org;
+      
+        body = {
+            title: "网络信息",
+            content: getIP() +`\n节点IP : ${ip}\n节点ISP : ${isp}\n节点位置 : ${emoji}${country} - ${city}`,
+            icon: "key.icloud",
+            'icon-color': "#5AC8FA"
+        };
+        $done(body);
+    });
 });
-
 
 function getFlagEmoji(countryCode) {
     const codePoints = countryCode
       .toUpperCase()
       .split('')
-      .map(char =>  127397 + char.charCodeAt());
+      .map(char => 127397 + char.charCodeAt());
     return String.fromCodePoint(...codePoints);
 }
 
 function getIP() {
-  const { v4, v6 } = $network;
-  let info = [];
-  if (!v4 && !v6) {
-    info = ['網路可能切換', '請手動重整面板更新 IP'];
-  } else {
-    if (v4?.primaryAddress) info.push(`设备IP : ${v4?.primaryAddress}`);
-    if (v6?.primaryAddress) info.push(`IPv6地址 : ${v6?.primaryAddress}`);
-    if (v4?.primaryRouter && getSSID()) info.push(`路由器IP : ${v4?.primaryRouter}`);
-    if (v6?.primaryRouter && getSSID()) info.push(`IPv6地址 : ${v6?.primaryRouter}`);
-  }
-  info = info.join("\n");
-  return info;
+    const { v4, v6 } = $network;
+    let info = [];
+    if (!v4 && !v6) {
+        info = ['网络可能切换', '请手动刷新面板更新IP'];
+    } else {
+        if (v4?.primaryAddress) info.push(`设备IP : ${v4?.primaryAddress}`);
+        if (v6?.primaryAddress) info.push(`IPv6地址 : ${v6?.primaryAddress}`);
+        if (v4?.primaryRouter && getSSID()) info.push(`路由器IP : ${v4?.primaryRouter}`);
+        if (v6?.primaryRouter && getSSID()) info.push(`IPv6地址 : ${v6?.primaryRouter}`);
+    }
+    info = info.join("\n");
+    return info;
 }
 
 function getSSID() {
     return $network.wifi?.ssid;
 }
+
