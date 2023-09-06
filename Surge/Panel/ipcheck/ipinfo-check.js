@@ -15,11 +15,8 @@ Surge：
 let args = getArgs();
 let token = args.token;
 let url = `https://ipinfo.io?token=${token}`;
-console.log(url)
 $httpClient.get(url, function (error, response, data) {
-    console.log(data)
     let jsonData = JSON.parse(data);
-    console.log(jsonData)
     let ip = jsonData.ip;
     let country = jsonData.country;
     let emoji = getFlagEmoji(jsonData.country);
