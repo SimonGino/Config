@@ -29,7 +29,7 @@ $httpClient.get(url, function (error, response, data) {
     body = {
         title: "Data from ipinfo.io",
         content: getIP() + `\n节点IP : ${ip}\n节点ISP : ${isp}\n节点位置 : ${emoji}${country} - ${city}`,
-        icon: "key.icloud",
+        icon: "network",
         'icon-color': "#5AC8FA"
     };
     $done(body);
