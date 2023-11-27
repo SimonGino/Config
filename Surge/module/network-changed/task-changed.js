@@ -8,21 +8,21 @@ let $ = nobyda();
 
 (async () => {
     const current = await $.getPolicy(config.all_proxy);
-    if(current === '日本代理链'){
+    if(current === 'JP-Wiki-Snell'){
         const network = $network.wifi.ssid;
         if (network) {
             const isIncluded = config.all_switch.includes(network);
             if (isIncluded) { 
                 //if the script was last run in cellular env.
                 $.setPolicy(config.all_proxy,config.all_snell)
-                $notification.post('断开公司WIFi', '', `网络切换至 ${config.all_snell}`);
+                $notification.post('断开公司WIFi', '', `网络切换至 ${config.all_ss}`);
             } else {
                 $.setPolicy(config.all_proxy,config.all_ss)
-                $notification.post('连接至公司WIFi', '', `网络切换至  ${config.all_ss}`);
+                $notification.post('连接至公司WIFi', '', `网络切换至  ${config.all_snell}`);
             }
         } else {
             $.setPolicy(config.all_proxy,config.all_ss)
-            $notification.post('连接至公司WIFi', '', `网络切换至  ${config.all_ss}`);
+            $notification.post('连接至公司WIFi', '', `网络切换至  ${config.all_snell}`);
         }
     }
 })().catch((err) => $notification.post('防火墙', '', `出现错误: ${err.message || err}`))
