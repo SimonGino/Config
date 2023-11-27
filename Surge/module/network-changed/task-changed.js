@@ -24,12 +24,15 @@ let $ = nobyda();
             $.setPolicy(config.all_proxy,config.all_snell)
             $notification.post('断开公司WIFi', '', `网络切换至  ${config.all_snell}`);
         }
-    }else if( current === '日本代理链'){
+    }else if(current === '日本代理链'){
         if (network) {
             if (!isIncluded) { 
                 $.setPolicy(config.all_proxy,config.all_snell)
                 $notification.post('断开公司WIFi', '', `网络切换至  ${config.all_snell}`);
             } 
+        }else {
+            $.setPolicy(config.all_proxy,config.all_snell)
+            $notification.post('断开公司WIFi', '', `网络切换至  ${config.all_snell}`);
         }
     }
 })().catch((err) => $notification.post('防火墙', '', `出现错误: ${err.message || err}`))
