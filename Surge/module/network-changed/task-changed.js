@@ -8,8 +8,8 @@ let $ = nobyda();
 
 (async () => {
     const current = await $.getPolicy(config.all_proxy);
+    const network = $network.wifi.ssid;
     if(current === 'JP-Wiki-Snell'){
-        const network = $network.wifi.ssid;
         if (network) {
             const isIncluded = config.all_switch.includes(network);
             if (isIncluded) { 
@@ -23,6 +23,13 @@ let $ = nobyda();
         } else {
             $.setPolicy(config.all_proxy,config.all_snell)
             $notification.post('断开公司WIFi', '', `网络切换至  ${config.all_snell}`);
+        }
+    }else if( current === '日本代理链'){
+        if (network) {
+            if (!isIncluded) { 
+                $.setPolicy(config.all_proxy,config.all_snell)
+                $notification.post('断开公司WIFi', '', `网络切换至  ${config.all_snell}`);
+            } 
         }
     }
 })().catch((err) => $notification.post('防火墙', '', `出现错误: ${err.message || err}`))
