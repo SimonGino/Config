@@ -12,8 +12,9 @@ if [ -n "$ipv6_address" ]; then
     disable_choice=${disable_choice:-Y}  # 如果用户未输入任何内容直接按回车，则将其视为选择了"Y"
     if [ "$disable_choice" = "Y" ] || [ "$disable_choice" = "y" ]; then
         # 用户选择关闭IPv6
-        sysctl -w net.ipv6.conf.all.disable_ipv6=1
-        sysctl -w net.ipv6.conf.default.disable_ipv6=1
+        echo "net.ipv6.conf.all.disable_ipv6=1" > /etc/sysctl.d/disable-ipv6.conf
+        echo "net.ipv6.conf.default.disable_ipv6=1" >> /etc/sysctl.d/disable-ipv6.conf
+        sysctl -p -f /etc/sysctl.d/disable-ipv6.conf
         echo "IPv6已被关闭。"
     else
         echo "未执行任何更改。"
@@ -25,15 +26,10 @@ else
     enable_choice=${enable_choice:-Y}  # 如果用户未输入任何内容直接按回车，则将其视为选择了"Y"
     if [ "$enable_choice" = "Y" ] || [ "$enable_choice" = "y" ]; then
         # 用户选择打开IPv6
-        sysctl -w net.ipv6.conf.all.disable_ipv6=0
-        sysctl -w net.ipv6.conf.default.disable_ipv6=0
+        rm /etc/sysctl.d/disable-ipv6.conf
+        sysctl -p
         echo "IPv6已被打开。"
     else
         echo "未执行任何更改。"
     fi
 fi
-
-# 重新加载配置以立即应用更改
-echo "重新加载配置以立即应用更改："
-echo "如果不生效请重启机器"
-sysctl -p
