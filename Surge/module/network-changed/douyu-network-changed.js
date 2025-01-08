@@ -1,8 +1,8 @@
 let config = {
   all_switch: ["digiwin-NJ"], // 指定的 Wi-Fi SSID
-  all_proxy: "DOUYU", // 策略组名称
-  all_trojan: "SG", // trojan 节点
-  all_direct: "DIRECT", // DIRECT 节点
+  all_proxy: "🐟 斗鱼直播", // 策略组名称
+  all_trojan: "🇸🇬 新加坡节点", // trojan 节点
+  all_direct: "🌐 全球直连", // DIRECT 节点
 };
 
 let $ = nobyda();
