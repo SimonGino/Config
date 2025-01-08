@@ -1,4 +1,34 @@
 proxies:
+  - name: "新加坡trojan"
+    type: trojan
+    server: 124.243.190.178
+    port: 50001
+    password: simon1122qaz
+    sni: bing.com
+    skip-cert-verify: true
+  - name: "香港trojan"
+    type: trojan
+    server: 47.242.15.131
+    port: 50001
+    password: simon1122qaz
+    sni: bing.com
+    skip-cert-verify: true
+  - name: "美国trojan"
+    type: trojan
+    server: 154.17.224.107
+    port: 50001
+    password: simon1122qaz
+    sni: bing.com
+    skip-cert-verify: true
+  - name: "香港Alice"
+    type: ss
+    server: 46.203.222.41
+    port: 8081
+    cipher: 2022-blake3-aes-128-gcm
+    password: "nEhwteQiAatNpdk6z8hAEA=="
+    smux:
+      enabled: false
+    dialer-proxy: 自建前置
   - name: "直连"
     type: direct
     udp: true
@@ -57,9 +87,9 @@ dns:
     - 223.5.5.5
     - 119.29.29.29
   nameserver:
-    - https://223.5.5.5/dns-query
+    - https://dnd.mytest.cc/dns-query
   proxy-server-nameserver:
-    - https://223.5.5.5/dns-query
+    - https://dnd.mytest.cc/dns-query
 
 proxy-groups:
   - name: 默认
