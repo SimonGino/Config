@@ -1,35 +1,58 @@
 #!/bin/bash
 
-# 检查是否存在IPv6地址
+# 检查是否以root权限运行
+if [ "$EUID" -ne 0 ]; then
+    echo "请使用root权限运行此脚本"
+    exit 1
+fi
+
+# 检查IPv6状态
+ipv6_status=$(sysctl -n net.ipv6.conf.all.disable_ipv6)
 ipv6_address=$(ip -6 addr show | grep inet6)
 
-if [ -n "$ipv6_address" ]; then
-    # 如果存在IPv6地址，则显示地址并询问用户是否要关闭IPv6
-    echo "系统已配置IPv6地址："
-    echo "$ipv6_address"
+if [ "$ipv6_status" -eq 0 ]; then
+    echo "IPv6当前状态：启用"
+    if [ -n "$ipv6_address" ]; then
+        echo "当前IPv6地址："
+        echo "$ipv6_address"
+    fi
+
     read -p "是否要关闭IPv6？(Y/n): " -n 1 -r disable_choice
-    echo  # 添加换行
-    disable_choice=${disable_choice:-Y}  # 如果用户未输入任何内容直接按回车，则将其视为选择了"Y"
-    if [ "$disable_choice" = "Y" ] || [ "$disable_choice" = "y" ]; then
-        # 用户选择关闭IPv6
-        echo "net.ipv6.conf.all.disable_ipv6=1" > /etc/sysctl.d/disable-ipv6.conf
-        echo "net.ipv6.conf.default.disable_ipv6=1" >> /etc/sysctl.d/disable-ipv6.conf
-        sysctl -p -f /etc/sysctl.d/disable-ipv6.conf
-        echo "IPv6已被关闭。"
+    echo
+    disable_choice=${disable_choice:-Y}
+
+    if [[ $disable_choice =~ ^[Yy]$ ]]; then
+        # 关闭IPv6
+        cat > /etc/sysctl.d/disable-ipv6.conf << EOF
+net.ipv6.conf.all.disable_ipv6=1
+net.ipv6.conf.default.disable_ipv6=1
+net.ipv6.conf.lo.disable_ipv6=1
+EOF
+        sysctl -p /etc/sysctl.d/disable-ipv6.conf
+        echo "IPv6已关闭，需要重启系统使更改生效"
     else
-        echo "未执行任何更改。"
+        echo "操作已取消"
     fi
 else
-    # 如果不存在IPv6地址，则询问用户是否要打开IPv6
-    read -p "系统未配置IPv6地址。是否要打开IPv6？(Y/n): " -n 1 -r enable_choice
-    echo  # 添加换行
-    enable_choice=${enable_choice:-Y}  # 如果用户未输入任何内容直接按回车，则将其视为选择了"Y"
-    if [ "$enable_choice" = "Y" ] || [ "$enable_choice" = "y" ]; then
-        # 用户选择打开IPv6
-        rm /etc/sysctl.d/disable-ipv6.conf
-        sysctl -p
-        echo "IPv6已被打开。"
+    echo "IPv6当前状态：禁用"
+    read -p "是否要启用IPv6？(Y/n): " -n 1 -r enable_choice
+    echo
+    enable_choice=${enable_choice:-Y}
+
+    if [[ $enable_choice =~ ^[Yy]$ ]]; then
+        # 启用IPv6
+        if [ -f "/etc/sysctl.d/disable-ipv6.conf" ]; then
+            rm -f /etc/sysctl.d/disable-ipv6.conf
+        fi
+
+        cat > /etc/sysctl.d/enable-ipv6.conf << EOF
+net.ipv6.conf.all.disable_ipv6=0
+net.ipv6.conf.default.disable_ipv6=0
+net.ipv6.conf.lo.disable_ipv6=0
+EOF
+        sysctl -p /etc/sysctl.d/enable-ipv6.conf
+        echo "IPv6已启用，需要重启系统使更改生效"
     else
-        echo "未执行任何更改。"
+        echo "操作已取消"
     fi
 fi
