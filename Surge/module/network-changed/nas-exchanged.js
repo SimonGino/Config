@@ -1,8 +1,8 @@
 let config = {
   all_switch: ["Xiaomi_8222_5G"], // 指定的 Wi-Fi SSID
   all_proxy: "🖲️ NAS", // 策略组名称
-  all_trojan: "wg", // trojan 节点
-  all_direct: "🌐 全球直连", // DIRECT 节点
+  all_trojan: "✈️ 节点选择", // trojan 节点
+  all_direct: "home", // DIRECT 节点
 };
 
 let $ = nobyda();
