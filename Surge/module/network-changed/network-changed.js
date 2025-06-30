@@ -1,32 +1,87 @@
-let config = {
-    all_switch: ["Redmi_9944_5G", "Redmi_9944"],
-    all_proxy: '🔰 节点选择',
-    all_snell: '日本snell',
-    all_ss: '鸡总日本',
+// 配置常量
+const CONFIG = {
+    // WiFi 白名单 - 在这些网络下使用 Snell 节点
+    wifiWhitelist: ["Redmi_9944_5G", "Redmi_9944"],
+    // 代理组名称
+    proxyGroup: '🔰 节点选择',
+    // Snell 节点名称
+    snellNode: '日本snell',
+    // SS 节点名称
+    ssNode: '鸡总日本',
 };
+
+// 消息常量
+const MESSAGES = {
+    wallModeDisabled: '墙中墙模式🚫',
+    wallModeEnabled: '墙中墙模式✅',
+    errorTitle: '防火墙',
+};
+
 let $ = nobyda();
 
-(async () => {
-    const current = await $.getPolicy(config.all_proxy);
-    if(current === '鸡总日本'){
-        const network = $network.wifi.ssid;
-        if (network) {
-            const isIncluded = config.all_switch.includes(network);
-            if (isIncluded) { 
-                //if the script was last run in cellular env.
-                $.setPolicy(config.all_proxy,config.all_snell)
-                $notification.post('墙中墙模式🚫', '', `网络切换至 ${config.all_snell}`);
-            } else {
-                $.setPolicy(config.all_proxy,config.all_ss)
-                $notification.post('墙中墙模式✅', '', `网络切换至  ${config.all_ss}`);
-            }
-        } else {
-            $.setPolicy(config.all_proxy,config.all_ss)
-            $notification.post('墙中墙模式✅', '', `网络切换至  ${config.all_ss}`);
-        }
+/**
+ * 确定目标策略节点
+ * @returns {string} 目标节点名称
+ */
+function determineTargetPolicy() {
+    const network = $network.wifi?.ssid;
+    
+    // 如果没有 WiFi 连接，使用 SS 节点
+    if (!network) {
+        return CONFIG.ssNode;
     }
-})().catch((err) => $notification.post('防火墙', '', `出现错误: ${err.message || err}`))
-    .finally(() => $done({}))
+    
+    // 如果是白名单 WiFi，使用 Snell 节点，否则使用 SS 节点
+    const isWhitelistedWifi = CONFIG.wifiWhitelist.includes(network);
+    return isWhitelistedWifi ? CONFIG.snellNode : CONFIG.ssNode;
+}
+
+/**
+ * 切换策略并发送通知
+ * @param {string} targetPolicy 目标策略名称
+ */
+async function switchPolicy(targetPolicy) {
+    try {
+        await $.setPolicy(CONFIG.proxyGroup, targetPolicy);
+        
+        const isSnellNode = targetPolicy === CONFIG.snellNode;
+        const title = isSnellNode ? MESSAGES.wallModeDisabled : MESSAGES.wallModeEnabled;
+        const message = `网络切换至 ${targetPolicy}`;
+        
+        $notification.post(title, '', message);
+    } catch (error) {
+        throw new Error(`策略切换失败: ${error.message || error}`);
+    }
+}
+
+/**
+ * 主执行函数
+ */
+(async () => {
+    try {
+        // 获取当前策略
+        const currentPolicy = await $.getPolicy(CONFIG.proxyGroup);
+        
+        // 验证获取到的策略
+        if (!currentPolicy || typeof currentPolicy !== 'string') {
+            throw new Error('无法获取当前策略状态');
+        }
+        
+        // 只有当前策略是 SS 节点时才执行切换逻辑
+        if (currentPolicy !== CONFIG.ssNode) {
+            return;
+        }
+        
+        // 确定目标策略并执行切换
+        const targetPolicy = determineTargetPolicy();
+        await switchPolicy(targetPolicy);
+        
+    } catch (error) {
+        const errorMsg = error.message || error.toString() || '未知错误';
+        $notification.post(MESSAGES.errorTitle, '', `出现错误: ${errorMsg}`);
+        console.log(`[Network-Changed] Error: ${errorMsg}`);
+    }
+})().finally(() => $done({}))
 
 function nobyda() {
     const isHTTP = typeof $httpClient != "undefined";
