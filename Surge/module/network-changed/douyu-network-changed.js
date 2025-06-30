@@ -1,8 +1,8 @@
 let config = {
-  all_switch: ["digiwin-NJ"], // 指定的 Wi-Fi SSID
-  all_proxy: "🐟 斗鱼直播", // 策略组名称
-  all_trojan: "🇸🇬 新加坡节点", // trojan 节点
-  all_direct: "🌐 全球直连", // DIRECT 节点
+  target_wifi: ["digiwin-NJ"], // 指定的 Wi-Fi SSID
+  proxy_group: "🐟 斗鱼直播", // 策略组名称
+  fallback_node: "✈️ 节点选择", // trojan 节点
+  direct_node: "🌐 全球直连", // DIRECT 节点
 };
 
 let $ = nobyda();
@@ -10,7 +10,7 @@ let $ = nobyda();
 (async () => {
   try {
     // 获取当前策略
-    const current = await $.getPolicy(config.all_proxy);
+    const current = await $.getPolicy(config.proxy_group);
 
     // 获取当前连接的 Wi-Fi SSID
     const network = $.ssid;
@@ -18,24 +18,24 @@ let $ = nobyda();
     let targetPolicy;
 
     if (network) {
-      const isIncluded = config.all_switch.includes(network);
+      const isIncluded = config.target_wifi.includes(network);
       if (isIncluded) {
-        targetPolicy = config.all_trojan;
+        targetPolicy = config.fallback_node;
       } else {
-        targetPolicy = config.all_direct;
+        targetPolicy = config.direct_node;
       }
     } else {
-      targetPolicy = config.all_direct;
+      targetPolicy = config.direct_node;
     }
 
     // 如果当前策略与目标策略一致，则不进行变更
     if (current !== targetPolicy) {
       // 切换策略
-      await $.setPolicy(config.all_proxy, targetPolicy);
-      $.notify("策略已变更", `从 ${current} 切换至 ${targetPolicy}`, "");
+      await $.setPolicy(config.proxy_group, targetPolicy);
+      $.notify("🐟 斗鱼策略变更", `从 ${current} 切换至 ${targetPolicy}`, "");
     }
   } catch (err) {
-    $.notify("防火墙", "", `出现错误: ${err.message || err}`);
+    $.notify("🐟 斗鱼脚本错误", "", `出现错误: ${err.message || err}`);
   } finally {
     $done({});
   }

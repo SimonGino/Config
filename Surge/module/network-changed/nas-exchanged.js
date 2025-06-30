@@ -39,13 +39,13 @@ let $ = nobyda();
     if (current !== targetPolicy) {
       // 切换策略
       await $.setPolicy(config.proxy_group, targetPolicy);
-      $.notify("策略已变更", `从 ${current} 切换至 ${targetPolicy}`, "");
+      $.notify("🖲️ NAS策略变更", `从 ${current} 切换至 ${targetPolicy}`, "");
       console.log(`策略变更: ${current} -> ${targetPolicy}`);
     } else {
       console.log(`策略无需变更，当前已是: ${current}`);
     }
   } catch (err) {
-    $.notify("防火墙", "", `出现错误: ${err.message || err}`);
+    $.notify("🖲️ NAS脚本错误", "", `出现错误: ${err.message || err}`);
     console.error("脚本执行错误:", err);
   } finally {
     $done({});
