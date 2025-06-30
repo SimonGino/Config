@@ -36,6 +36,7 @@ let $ = nobyda();
     }
   } catch (err) {
     $.notify("🐟 斗鱼脚本错误", "", `出现错误: ${err.message || err}`);
+    console.error("脚本执行错误:", err);
   } finally {
     $done({});
   }
