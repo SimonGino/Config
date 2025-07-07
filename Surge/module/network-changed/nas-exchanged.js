@@ -25,7 +25,7 @@ let $ = nobyda();
     } else {
       // 不在指定路由器下，检查IPv6
       const hasIPv6 = await checkIPv6();
-      
+
       if (hasIPv6) {
         targetPolicy = config.home_node;
         console.log("检测到IPv6网络，切换到home节点");
@@ -54,10 +54,8 @@ let $ = nobyda();
 
 // 检查IPv6连接性的函数
 async function checkIPv6() {
-  // 直接通过 Surge 的 $network 变量判断是否存在 IPv6 地址
-  // 这比外部网络请求更准确、更快速
-  const hasIPv6 = $network && $network.v6 && $network.v6.primaryAddress;
-  return Promise.resolve(!!hasIPv6);
+  // 使用nobyda对象的checkIPv6方法
+  return $.checkIPv6();
 }
 
 function nobyda() {
@@ -191,6 +189,36 @@ function nobyda() {
     }
   };
 
+  const checkIPv6 = () => {
+    if (isSurge) {
+      // 通过多种方式判断IPv6连接性
+      // 1. 检查是否有IPv6主地址
+      if ($network && $network.v6 && $network.v6.primaryAddress) {
+        return true;
+      }
+
+      // 2. 检查是否有IPv6接口
+      if ($network && $network.v6 && $network.v6.primaryInterface) {
+        return true;
+      }
+
+      // 3. 检查DNS服务器中是否包含IPv6地址
+      if ($network && $network.dns && Array.isArray($network.dns)) {
+        const hasIPv6DNS = $network.dns.some((dns) => {
+          // 简单的IPv6地址检测：包含冒号且不是IPv4映射的IPv6地址
+          return dns.includes(":") && !dns.startsWith("::ffff:");
+        });
+        if (hasIPv6DNS) {
+          return true;
+        }
+      }
+
+      return false;
+    }
+    // 其他客户端暂时返回false，可根据需要扩展
+    return false;
+  };
+
   return {
     getPolicy,
     setPolicy,
@@ -201,5 +229,6 @@ function nobyda() {
     read,
     ssid,
     get,
+    checkIPv6,
   };
 }

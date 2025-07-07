@@ -41,10 +41,6 @@ let $ = nobyda();
     // 获取当前连接的 Wi-Fi SSID
     const network = $.ssid;
 
-    console.log(`当前WiFi: ${network || '未连接'}`);
-    console.log(`目标WiFi: ${config.target_wifi}`);
-    console.log(`当前策略: ${current}`);
-
     // 判断是否需要切换
     if (network && network === config.target_wifi) {
       // 在目标WiFi下，切换到直连节点
