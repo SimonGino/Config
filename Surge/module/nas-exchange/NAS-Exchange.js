@@ -12,7 +12,7 @@ function getParams(argument) {
     argument
       .split("&")
       .map((item) => item.split("="))
-      .map(([k, v]) => [k, decodeURIComponent(v)])
+      .map(([k, v]) => [k, decodeURIComponent(v)]),
   );
 }
 
@@ -83,8 +83,25 @@ let $ = nobyda();
 async function checkIPv6() {
   // 直接通过 Surge 的 $network 变量判断是否存在 IPv6 地址
   // 这比外部网络请求更准确、更快速
-  const hasIPv6 = $network && $network.v6 && $network.v6.primaryAddress;
-  return Promise.resolve(!!hasIPv6);
+  console.log("=== IPv6 检测开始 ===");
+  console.log("$network 对象:", $network ? "存在" : "不存在");
+
+  if ($network) {
+    console.log("$network.v6 对象:", $network.v6 ? "存在" : "不存在");
+
+    if ($network.v6) {
+      console.log(
+        "$network.v6.primaryAddress:",
+        $network.v6.primaryAddress ? $network.v6.primaryAddress : "不存在",
+      );
+      console.log(
+        "$network.v6 完整对象:",
+        JSON.stringify($network.v6, null, 2),
+      );
+    }
+
+    console.log("$network 完整对象:", JSON.stringify($network, null, 2));
+  }
 }
 
 function nobyda() {
