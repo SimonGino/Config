@@ -1,0 +1,8 @@
+#!name=NAS-Exchange-Simple
+#!desc=NAS智能切换模块(简化版) - 根据WiFi和IPv6自动切换策略
+#!category=网络切换
+#!arguments=TARGET_WIFI:Xiaomi_8222_5G,PROXY_GROUP:🖲️ NAS,DIRECT_NODE:🌐 全球直连
+#!arguments-desc=[简化参数设置]\n\n⓵ TARGET_WIFI: 目标WiFi名称，在此WiFi下使用直连\n⓶ PROXY_GROUP: 策略组名称\n⓷ DIRECT_NODE: 直连节点名称
+
+[Script]
+NAS-Exchange-Simple = type=event,event-name=network-changed,timeout=10,script-path=NAS-Exchange-Simple.js,argument=target_wifi={{{TARGET_WIFI}}}&proxy_group={{{PROXY_GROUP}}}&direct_node={{{DIRECT_NODE}}}
