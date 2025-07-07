@@ -5,4 +5,4 @@
 #!arguments-desc=[参数设置]\n\n⓵ TARGET_WIFI: 目标WiFi SSID，在此WiFi下使用直连模式\n\n⓶ PROXY_GROUP: 要控制的策略组名称\n\n⓷ DIRECT_NODE: 在目标WiFi下使用的节点\n\n⓸ HOME_NODE: 检测到IPv6时使用的节点\n\n⓹ FALLBACK_NODE: 默认使用的节点（无IPv6时）
 
 [Script]
-NAS-Exchange = type=event,event-name=network-changed,timeout=10,script-path=NAS-Exchange.js,argument=target_wifi={{{TARGET_WIFI}}}&proxy_group={{{PROXY_GROUP}}}&direct_node={{{DIRECT_NODE}}}&home_node={{{HOME_NODE}}}&fallback_node={{{FALLBACK_NODE}}}
+NAS-Exchange = type=event,event-name=network-changed,timeout=10,script-path=https://raw.githubusercontent.com/SimonGino/Config/refs/heads/master/Surge/module/nas-exchange/NAS-Exchange.js,argument=target_wifi={{{TARGET_WIFI}}}&proxy_group={{{PROXY_GROUP}}}&direct_node={{{DIRECT_NODE}}}&home_node={{{HOME_NODE}}}&fallback_node={{{FALLBACK_NODE}}}
