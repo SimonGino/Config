@@ -1,16 +1,22 @@
-proxies:
-  - name: "直连"
-    type: direct
-    udp: true
+# Merged Clash Meta config (sanitized)
+# Last Update: 2026-02-06
 
 mixed-port: 7890
-ipv6: true
-allow-lan: true
+ipv6: false
+allow-lan: false
 unified-delay: false
 tcp-concurrent: true
 external-controller: 127.0.0.1:9090
+secret: "FL3n0mph5fEX9eJfN1QckQThEYSiwAnNLnzrqOwOG/B7pUxd"
 external-ui: ui
 external-ui-url: "https://github.com/MetaCubeX/metacubexd/archive/refs/heads/gh-pages.zip"
+
+geodata-mode: true
+geox-url:
+  geoip: "https://mirror.ghproxy.com/https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip-lite.dat"
+  geosite: "https://mirror.ghproxy.com/https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geosite.dat"
+  mmdb: "https://mirror.ghproxy.com/https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/country-lite.mmdb"
+  asn: "https://mirror.ghproxy.com/https://github.com/xishang0128/geoip/releases/download/latest/GeoLite2-ASN.mmdb"
 
 find-process-mode: strict
 global-client-fingerprint: chrome
@@ -34,19 +40,20 @@ sniffer:
     - "+.push.apple.com"
 
 tun:
-  enable: true
+  enable: false
   stack: mixed
   dns-hijack:
     - "any:53"
     - "tcp://any:53"
   auto-route: true
+  strict-route: true
   auto-redirect: true
   auto-detect-interface: true
+  disable-icmp-forwarding: true
 
 dns:
   enable: true
-  ipv6: true
-  respect-rules: true
+  ipv6: false
   enhanced-mode: fake-ip
   fake-ip-filter:
     - "*"
@@ -56,283 +63,294 @@ dns:
   default-nameserver:
     - 223.5.5.5
     - 119.29.29.29
-  nameserver:
-    - https://dnd.mytest.cc/dns-query
-  proxy-server-nameserver:
-    - https://dnd.mytest.cc/dns-query
 
-proxy-groups:
-  # 基础分流组
-  - name: 节点选择
-    type: select
-    proxies: [香港节点, 美国节点, 日本节点, 台湾节点, 新加坡节点, 我的节点]
-    url: "http://latency-test.skk.moe/endpoint"
-    interval: 300
+# Subscription providers
+p: &p {type: http, interval: 86400, health-check: {enable: true, url: http://latency-test.skk.moe/endpoint, interval: 300, timeout: 5000}}
 
-  - name: 电报信息
-    type: select
-    proxies: [节点选择, 香港节点, 美国节点, 日本节点, 台湾节点, 新加坡节点]
-    url: "http://latency-test.skk.moe/endpoint"
-    interval: 300
+proxy-providers:
+  provider1:
+    url: "https://example.com/provider1.yaml"
+    <<: *p
+  provider2:
+    url: "https://example.com/provider2.yaml"
+    <<: *p
 
-  - name: 国外媒体
-    type: select
-    proxies: [节点选择, 香港节点, 美国节点, 日本节点, 台湾节点, 新加坡节点]
-    url: "http://latency-test.skk.moe/endpoint"
-    interval: 300
+proxies:
+  - name: "直连"
+    type: direct
+    udp: true
+    ip-version: ipv4
 
-  - name: 微软服务
-    type: select
-    proxies:
-      [DIRECT, 节点选择, 香港节点, 美国节点, 日本节点, 台湾节点, 新加坡节点]
-    url: "http://latency-test.skk.moe/endpoint"
-    interval: 300
-
-  - name: 苹果服务
-    type: select
-    proxies:
-      [DIRECT, 节点选择, 香港节点, 美国节点, 日本节点, 台湾节点, 新加坡节点]
-    url: "http://latency-test.skk.moe/endpoint"
-    interval: 300
-
-  - name: 人工智能
-    type: select
-    proxies: [美国节点, 新加坡节点]
-    url: "http://latency-test.skk.moe/endpoint"
-    interval: 300
-
-  # 区域分流组
-  - name: 香港节点
-    type: select
-    include-all: true
-    exclude-type: direct
-    filter: "(?i)🇭🇰|香港|(\b(HK|Hong)\b)"
-    url: "http://latency-test.skk.moe/endpoint"
-    interval: 300
-
-  - name: 美国节点
-    type: select
-    include-all: true
-    exclude-type: direct
-    filter: "(🇺🇸)|(美)|(States)|(US)"
-    url: "http://latency-test.skk.moe/endpoint"
-    interval: 300
-
-  - name: 日本节点
-    type: select
-    include-all: true
-    exclude-type: direct
-    filter: "(🇯🇵)|(日)|(Japan)|(JP)"
-    url: "http://latency-test.skk.moe/endpoint"
-    interval: 300
-
-  - name: 台湾节点
-    type: select
-    include-all: true
-    exclude-type: direct
-    filter: "(🐸)|(台)|(Tai)|(TW)"
-    url: "http://latency-test.skk.moe/endpoint"
-    interval: 300
-
-  - name: 新加坡节点
-    type: select
-    include-all: true
-    exclude-type: direct
-    filter: "(🇸🇬)|(新)|(Singapore)|(SG)"
-    url: "http://latency-test.skk.moe/endpoint"
-    interval: 300
-
-  - name: 我的节点
-    type: select
-    include-all: true
-    exclude-type: direct
-    url: "http://latency-test.skk.moe/endpoint"
-    interval: 300
-
-  - name: 自建前置
-    type: select
-    proxies: [香港trojan, 新加坡trojan]
-    url: "http://latency-test.skk.moe/endpoint"
-    interval: 300
-
-rule-anchor:
-  ip: &ip { type: http, interval: 86400, behavior: ipcidr, format: mrs }
-  domain: &domain { type: http, interval: 86400, behavior: domain, format: mrs }
-
+# Rule providers
 rule-providers:
-  # === Domainset 规则 ===
-  reject_domainset:
+  Douyu:
     type: http
-    behavior: domain
-    url: https://ruleset.skk.moe/Clash/domainset/reject.txt
-    path: ./ruleset/reject_domainset.txt
-    interval: 86400
-
-  speedtest_domainset:
-    type: http
-    behavior: domain
-    url: https://ruleset.skk.moe/Clash/domainset/speedtest.txt
-    path: ./ruleset/speedtest_domainset.txt
-    interval: 86400
+    behavior: classical
+    format: yaml
+    interval: 43200
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Douyu/Douyu.yaml"
+    path: "./RuleSet/Douyu.yaml"
 
   cdn_domainset:
     type: http
     behavior: domain
-    url: https://ruleset.skk.moe/Clash/domainset/cdn.txt
-    path: ./ruleset/cdn_domainset.txt
-    interval: 86400
-
-  apple_cdn_domainset:
-    type: http
-    behavior: domain
-    url: https://ruleset.skk.moe/Clash/domainset/apple_cdn.txt
-    path: ./ruleset/apple_cdn_domainset.txt
-    interval: 86400
-
-  download_domainset:
-    type: http
-    behavior: domain
-    url: https://ruleset.skk.moe/Clash/domainset/download.txt
-    path: ./ruleset/download_domainset.txt
-    interval: 86400
-
-  # === Non_IP 规则 ===
-  reject_non_ip:
-    type: http
-    behavior: classical
-    url: https://ruleset.skk.moe/Clash/non_ip/reject.txt
-    path: ./ruleset/reject_non_ip.txt
-    interval: 86400
+    format: text
+    interval: 43200
+    url: "https://ruleset.skk.moe/Clash/domainset/cdn.txt"
+    path: "./sukkaw_ruleset/cdn_domainset.txt"
 
   cdn_non_ip:
     type: http
     behavior: classical
-    url: https://ruleset.skk.moe/Clash/non_ip/cdn.txt
-    path: ./ruleset/cdn_non_ip.txt
-    interval: 86400
+    format: text
+    interval: 43200
+    url: "https://ruleset.skk.moe/Clash/non_ip/cdn.txt"
+    path: "./sukkaw_ruleset/cdn_non_ip.txt"
 
   stream_non_ip:
     type: http
     behavior: classical
-    url: https://ruleset.skk.moe/Clash/non_ip/stream.txt
-    path: ./ruleset/stream_non_ip.txt
-    interval: 86400
-
-  telegram_non_ip:
-    type: http
-    behavior: classical
-    url: https://ruleset.skk.moe/Clash/non_ip/telegram.txt
-    path: ./ruleset/telegram_non_ip.txt
-    interval: 86400
-
-  microsoft_cdn_non_ip:
-    type: http
-    behavior: classical
-    url: https://ruleset.skk.moe/Clash/non_ip/microsoft_cdn.txt
-    path: ./ruleset/microsoft_cdn_non_ip.txt
-    interval: 86400
-
-  download_non_ip:
-    type: http
-    behavior: classical
-    url: https://ruleset.skk.moe/Clash/non_ip/download.txt
-    path: ./ruleset/download_non_ip.txt
-    interval: 86400
-
-  apple_services_non_ip:
-    type: http
-    behavior: classical
-    url: https://ruleset.skk.moe/Clash/non_ip/apple_services.txt
-    path: ./ruleset/apple_services_non_ip.txt
-    interval: 86400
-
-  microsoft_non_ip:
-    type: http
-    behavior: classical
-    url: https://ruleset.skk.moe/Clash/non_ip/microsoft.txt
-    path: ./ruleset/microsoft_non_ip.txt
-    interval: 86400
-
-  ai_non_ip:
-    type: http
-    behavior: classical
-    url: https://ruleset.skk.moe/Clash/non_ip/ai.txt
-    path: ./ruleset/ai_non_ip.txt
-    interval: 86400
-
-  global_non_ip:
-    type: http
-    behavior: classical
-    url: https://ruleset.skk.moe/Clash/non_ip/global.txt
-    path: ./ruleset/global_non_ip.txt
-    interval: 86400
-
-  # === IP 规则 ===
-  reject_ip:
-    type: http
-    behavior: classical
-    url: https://ruleset.skk.moe/Clash/ip/reject.txt
-    path: ./ruleset/reject_ip.txt
-    interval: 86400
-
-  telegram_ip:
-    type: http
-    behavior: classical
-    url: https://ruleset.skk.moe/Clash/ip/telegram.txt
-    path: ./ruleset/telegram_ip.txt
-    interval: 86400
+    format: text
+    interval: 43200
+    url: "https://ruleset.skk.moe/Clash/non_ip/stream.txt"
+    path: "./sukkaw_ruleset/stream_non_ip.txt"
 
   stream_ip:
     type: http
     behavior: classical
-    url: https://ruleset.skk.moe/Clash/ip/stream.txt
-    path: ./ruleset/stream_ip.txt
-    interval: 86400
+    format: text
+    interval: 43200
+    url: "https://ruleset.skk.moe/Clash/ip/stream.txt"
+    path: "./sukkaw_ruleset/stream_ip.txt"
+
+  ai_non_ip:
+    type: http
+    behavior: classical
+    format: text
+    interval: 43200
+    url: "https://ruleset.skk.moe/Clash/non_ip/ai.txt"
+    path: "./sukkaw_ruleset/ai_non_ip.txt"
+
+  telegram_non_ip:
+    type: http
+    behavior: classical
+    format: text
+    interval: 43200
+    url: "https://ruleset.skk.moe/Clash/non_ip/telegram.txt"
+    path: "./sukkaw_ruleset/telegram_non_ip.txt"
+
+  telegram_ip:
+    type: http
+    behavior: classical
+    format: text
+    interval: 43200
+    url: "https://ruleset.skk.moe/Clash/ip/telegram.txt"
+    path: "./sukkaw_ruleset/telegram_ip.txt"
+
+  apple_cdn:
+    type: http
+    behavior: domain
+    format: text
+    interval: 43200
+    url: "https://ruleset.skk.moe/Clash/domainset/apple_cdn.txt"
+    path: "./sukkaw_ruleset/apple_cdn.txt"
+
+  apple_services:
+    type: http
+    behavior: classical
+    format: text
+    interval: 43200
+    url: "https://ruleset.skk.moe/Clash/non_ip/apple_services.txt"
+    path: "./sukkaw_ruleset/apple_services.txt"
+
+  apple_cn_non_ip:
+    type: http
+    behavior: classical
+    format: text
+    interval: 43200
+    url: "https://ruleset.skk.moe/Clash/non_ip/apple_cn.txt"
+    path: "./sukkaw_ruleset/apple_cn_non_ip.txt"
+
+  microsoft_cdn_non_ip:
+    type: http
+    behavior: classical
+    format: text
+    interval: 43200
+    url: "https://ruleset.skk.moe/Clash/non_ip/microsoft_cdn.txt"
+    path: "./sukkaw_ruleset/microsoft_cdn_non_ip.txt"
+
+  microsoft_non_ip:
+    type: http
+    behavior: classical
+    format: text
+    interval: 43200
+    url: "https://ruleset.skk.moe/Clash/non_ip/microsoft.txt"
+    path: "./sukkaw_ruleset/microsoft_non_ip.txt"
+
+  download_domainset:
+    type: http
+    behavior: domain
+    format: text
+    interval: 43200
+    url: "https://ruleset.skk.moe/Clash/domainset/download.txt"
+    path: "./sukkaw_ruleset/download_domainset.txt"
+
+  download_non_ip:
+    type: http
+    behavior: classical
+    format: text
+    interval: 43200
+    url: "https://ruleset.skk.moe/Clash/non_ip/download.txt"
+    path: "./sukkaw_ruleset/download_non_ip.txt"
+
+  lan_non_ip:
+    type: http
+    behavior: classical
+    format: text
+    interval: 43200
+    url: "https://ruleset.skk.moe/Clash/non_ip/lan.txt"
+    path: "./sukkaw_ruleset/lan_non_ip.txt"
+
+  lan_ip:
+    type: http
+    behavior: classical
+    format: text
+    interval: 43200
+    url: "https://ruleset.skk.moe/Clash/ip/lan.txt"
+    path: "./sukkaw_ruleset/lan_ip.txt"
+
+  domestic_non_ip:
+    type: http
+    behavior: classical
+    format: text
+    interval: 43200
+    url: "https://ruleset.skk.moe/Clash/non_ip/domestic.txt"
+    path: "./sukkaw_ruleset/domestic_non_ip.txt"
+
+  direct_non_ip:
+    type: http
+    behavior: classical
+    format: text
+    interval: 43200
+    url: "https://ruleset.skk.moe/Clash/non_ip/direct.txt"
+    path: "./sukkaw_ruleset/direct_non_ip.txt"
+
+  global_non_ip:
+    type: http
+    behavior: classical
+    format: text
+    interval: 43200
+    url: "https://ruleset.skk.moe/Clash/non_ip/global.txt"
+    path: "./sukkaw_ruleset/global_non_ip.txt"
+
+  domestic_ip:
+    type: http
+    behavior: classical
+    format: text
+    interval: 43200
+    url: "https://ruleset.skk.moe/Clash/ip/domestic.txt"
+    path: "./sukkaw_ruleset/domestic_ip.txt"
 
   china_ip:
     type: http
     behavior: ipcidr
-    url: https://ruleset.skk.moe/Clash/ip/china_ip.txt
-    path: ./ruleset/china_ip.txt
+    format: text
+    interval: 43200
+    url: "https://ruleset.skk.moe/Clash/ip/china_ip.txt"
+    path: "./sukkaw_ruleset/china_ip.txt"
+
+  china_ip_ipv6:
+    type: http
+    behavior: ipcidr
+    format: text
+    interval: 43200
+    url: "https://ruleset.skk.moe/Clash/ip/china_ip_ipv6.txt"
+    path: "./sukkaw_ruleset/china_ipv6.txt"
+
+  PTChina:
+    type: http
+    behavior: classical
+    format: text
+    path: "./rules/PTChina.list"
+    url: "https://raw.githubusercontent.com/Pollo3470/rules/refs/heads/main/Ruleset/PTChina.list"
+    interval: 86400
+
+  PTForeign:
+    type: http
+    behavior: classical
+    format: text
+    path: "./rules/PTForeign.list"
+    url: "https://raw.githubusercontent.com/Pollo3470/rules/refs/heads/main/Ruleset/PTForeign.list"
     interval: 86400
 
 rules:
-  # === 自定义域名规则 ===
-  - DOMAIN-SUFFIX,odylife.org,节点选择
-  - DOMAIN-SUFFIX,yxvm.com,DIRECT
-  - DOMAIN-SUFFIX,eaimty.com,节点选择
-  - DOMAIN-SUFFIX,zed.dev,美国节点
-  - DOMAIN-SUFFIX,macked.app,节点选择
-  - DOMAIN-SUFFIX,odysseyplus.site,节点选择
-  - DOMAIN-SUFFIX,nodeseek.com,节点选择
-  - DOMAIN-SUFFIX,csb.app,节点选择
-  - DOMAIN-SUFFIX,codesandbox.io,节点选择
-  - DOMAIN-SUFFIX,linux.do,节点选择
+  # Google FCM direct
+  - AND,((NETWORK,TCP),(DST-PORT,5228-5230)),DIRECT
 
-  # === Domainset 规则 ===
-  - RULE-SET,reject_domainset,REJECT
-  - RULE-SET,speedtest_domainset,节点选择
-  - RULE-SET,cdn_domainset,节点选择
-  - RULE-SET,apple_cdn_domainset,苹果服务
-  - RULE-SET,download_domainset,节点选择
+  # Custom direct rules
+  - PROCESS-NAME,zoom.us,DIRECT
 
-  # === Non_IP 规则 ===
-  - RULE-SET,reject_non_ip,REJECT
-  - RULE-SET,cdn_non_ip,节点选择
-  - RULE-SET,stream_non_ip,国外媒体
-  - RULE-SET,telegram_non_ip,电报信息
-  - RULE-SET,microsoft_cdn_non_ip,微软服务
-  - RULE-SET,download_non_ip,节点选择
-  - RULE-SET,apple_services_non_ip,苹果服务
-  - RULE-SET,microsoft_non_ip,微软服务
-  - RULE-SET,ai_non_ip,人工智能
-  - RULE-SET,global_non_ip,节点选择
+  # PT and content rules
+  - RULE-SET,Douyu,DIRECT
+  - DOMAIN-SUFFIX,pterclub.net,DIRECT
+  - RULE-SET,PTChina,DIRECT
+  - RULE-SET,PTForeign,DIRECT
 
-  # === IP 规则 ===
-  - RULE-SET,reject_ip,REJECT
-  - RULE-SET,telegram_ip,电报信息
-  - RULE-SET,stream_ip,国外媒体
+  # Sukka rulesets
+  - RULE-SET,cdn_domainset,DIRECT
+  - RULE-SET,cdn_non_ip,DIRECT
+  - RULE-SET,stream_non_ip,DIRECT
+  - RULE-SET,ai_non_ip,DIRECT
+  - RULE-SET,telegram_non_ip,DIRECT
+  - RULE-SET,apple_cdn,DIRECT
+  - RULE-SET,apple_services,DIRECT
+  - RULE-SET,apple_cn_non_ip,DIRECT
+  - RULE-SET,microsoft_cdn_non_ip,DIRECT
+  - RULE-SET,microsoft_non_ip,DIRECT
+  - RULE-SET,download_domainset,DIRECT
+  - RULE-SET,download_non_ip,DIRECT
+  - RULE-SET,lan_non_ip,DIRECT
+  - RULE-SET,domestic_non_ip,DIRECT
+  - RULE-SET,direct_non_ip,DIRECT
+  - RULE-SET,global_non_ip,DIRECT
+
+  # IP rules
+  - RULE-SET,stream_ip,DIRECT
+  - RULE-SET,telegram_ip,DIRECT
+  - RULE-SET,lan_ip,DIRECT
+  - RULE-SET,domestic_ip,DIRECT
   - RULE-SET,china_ip,DIRECT
 
-  # === Final ===
-  - MATCH,节点选择
+  # Downloader processes direct
+  - PROCESS-NAME,aria2c,DIRECT
+  - PROCESS-NAME,BitComet,DIRECT
+  - PROCESS-NAME,fdm,DIRECT
+  - PROCESS-NAME,NetTransport,DIRECT
+  - PROCESS-NAME,qbittorrent,DIRECT
+  - PROCESS-NAME,Thunder,DIRECT
+  - PROCESS-NAME,transmission-daemon,DIRECT
+  - PROCESS-NAME,transmission-qt,DIRECT
+  - PROCESS-NAME,uTorrent,DIRECT
+  - PROCESS-NAME,WebTorrent,DIRECT
+  - PROCESS-NAME,Folx,DIRECT
+  - PROCESS-NAME,Transmission,DIRECT
+  - PROCESS-NAME,transmission,DIRECT
+  - PROCESS-NAME,WebTorrent Helper,DIRECT
+
+  # Proxy tool processes direct
+  - PROCESS-NAME,v2ray,DIRECT
+  - PROCESS-NAME,ss-local,DIRECT
+  - PROCESS-NAME,ssr-local,DIRECT
+  - PROCESS-NAME,ss-redir,DIRECT
+  - PROCESS-NAME,ssr-redir,DIRECT
+  - PROCESS-NAME,ss-server,DIRECT
+  - PROCESS-NAME,trojan-go,DIRECT
+  - PROCESS-NAME,xray,DIRECT
+  - PROCESS-NAME,hysteria,DIRECT
+
+  # Game boosters direct
+  - PROCESS-NAME,UUBooster,DIRECT
+  - PROCESS-NAME,uugamebooster,DIRECT
+
+  # Final fallback
+  - MATCH,DIRECT
